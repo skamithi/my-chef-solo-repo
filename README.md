@@ -1,4 +1,4 @@
-run
+# For starters run
 
 knife-solo init .
 
