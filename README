@@ -2,4 +2,4 @@ run
 
 knife-solo init .
 
-librarian-chef install
+librarian-chef init .
