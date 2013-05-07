@@ -7,9 +7,9 @@ Using this repo to learn Chef.
 ## Cookbooks
 * apt -> to install packages
 
-## After Cloning repo, what's next
+## After cloning repo
 
-To initialize the chef solo repo run
+Initialize the chef solo repo run
 
 ```
 knife-solo init .
