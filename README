@@ -1,0 +1,5 @@
+run
+
+knife-solo init .
+
+librarian-chef install
