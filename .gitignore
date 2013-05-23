@@ -1,3 +1,4 @@
-solo.pem
+chef-client*
+pems/
 */.gitkeep
 tmp/
