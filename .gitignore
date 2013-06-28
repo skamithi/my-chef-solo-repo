@@ -2,3 +2,4 @@ chef-client*
 pems/
 */.gitkeep
 tmp/
+*.swp
