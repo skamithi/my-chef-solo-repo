@@ -115,3 +115,5 @@ DEPENDENCIES
   librarian
   pry
   pry-doc
+  rspec
+  rspec-mocks
