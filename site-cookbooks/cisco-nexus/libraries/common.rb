@@ -1,7 +1,8 @@
 require 'expect4r'
+require './errors'
 
 module Cisco
-  
+ 
   class AnyRouterSwitch
 
     attr_accessor :term_session, :errors
@@ -39,16 +40,20 @@ module Cisco
     # Look at the code to determine which timezone variable to use
     # TODO create function that returns list of acceptable timezones
     def set_clock(timezone) 
+      if timezone.nil? || timezone.empty?
+        raise Cisco::Error::ClockSettingFailure
+      end
       str = nil
+      binding.pry
+      @term_session.config
       case timezone
       when 'Eastern'
-        str = 'clock timezone EST -5 0 \n'
-        str += 'clock summer-time EDT 2 Sun Mar 02:00 1 Sun Nov 02:00 60'
+        @term_session.exp_send 'clock timezone EST -5 0'
+        @term_session.exp_send 'clock summer-time EDT 2 Sun Mar 02:00 1 Sun Nov 02:00 60'
       end
-      @term_session.config %{
-        str
-      }
+      @term_session.to_exec
     end
+
   end
 end
 

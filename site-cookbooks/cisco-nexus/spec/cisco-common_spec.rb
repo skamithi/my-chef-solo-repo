@@ -11,19 +11,43 @@ describe 'Cisco' do
     end
     context 'successful login' do
       let!(:params) { {:user => 'myusername', :host => 'host', :passwd => 'mypass'} }
-      let(:action) { Cisco::Nexus.new(params) }
+      let(:login) { Cisco::Nexus.new(params) }
       before do
         @session = 'This is my nexus session'
         Expect4r::Nexus.stub(:new_ssh).and_return(@session)
       end
       it 'should create a terminal session' do
-        action.term_session.should == @session
+        login.term_session.should == @session
       end
 
       it 'should not produce any errors' do
-        action.errors.should be_empty
+        login.errors.should be_empty
       end
     end
+    context 'timezone' do
+      context 'when provided with a valid timezone' do
+        let(:term_session) { double('term-session') }
+        let!(:params) { {:user => 'myusername', :host => 'host', :passwd => 'mypass'} }
+        let(:login) { Cisco::Nexus.new(params) }
+        before do
+          # setup stub environment
+          Expect4r::Nexus.should_receive(:new_ssh).and_return(term_session)
+          term_session.should_receive(:config)
+          term_session.should_receive(:exp_send).and_return('perform the time setting')
+          term_session.should_receive(:to_exec)
 
+          #login and enter the timezone
+          login
+        end
+        it 'should set the correct timezone setting on the device' do
+          lambda { login.set_clock('Eastern')}.should_not raise Cisco::Errors::TimezoneNotDefined
+        end
+      end
+      context 'when provided with an invalid timezone' do
+        it 'should raise an error' do
+          lambda { login.set_clock() }.should  raise Cisco::Errors::TimezoneNotDefined
+        end
+      end
+    end
   end
 end
