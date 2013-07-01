@@ -25,27 +25,38 @@ describe 'Cisco' do
       end
     end
     context 'timezone' do
+      let(:term_session) { double('term-session') }
+      let!(:params) { {:user => 'myusername', :host => 'host', :passwd => 'mypass'} }
+      let(:login) { Cisco::Nexus.new(params) }
+      before do
+        # setup stub environment
+        Expect4r::Nexus.should_receive(:new_ssh).and_return(term_session)
+             #login and enter the timezone
+        login
+      end
       context 'when provided with a valid timezone' do
-        let(:term_session) { double('term-session') }
-        let!(:params) { {:user => 'myusername', :host => 'host', :passwd => 'mypass'} }
-        let(:login) { Cisco::Nexus.new(params) }
         before do
-          # setup stub environment
-          Expect4r::Nexus.should_receive(:new_ssh).and_return(term_session)
           term_session.should_receive(:config)
-          term_session.should_receive(:exp_send).and_return('perform the time setting')
+          term_session.should_receive(:exp_send).twice.and_return('perform the time setting')
           term_session.should_receive(:to_exec)
-
-          #login and enter the timezone
-          login
         end
+
         it 'should set the correct timezone setting on the device' do
-          lambda { login.set_clock('Eastern')}.should_not raise Cisco::Errors::TimezoneNotDefined
+          lambda { login.set_clock('Eastern')}.should_not raise_error Cisco::Errors::TimezoneNotDefined
         end
       end
       context 'when provided with an invalid timezone' do
+        before do
+          term_session.should_receive(:config)
+          term_session.should_receive(:to_exec)
+        end
         it 'should raise an error' do
-          lambda { login.set_clock() }.should  raise Cisco::Errors::TimezoneNotDefined
+          lambda { login.set_clock('sdfdf') }.should  raise_error Cisco::Errors::TimezoneInvalid
+        end
+      end
+      context 'when provided with empty timezone' do
+        it 'should raise an error' do
+          lambda { login.set_clock('') }.should  raise_error Cisco::Errors::TimezoneNotDefined
         end
       end
     end

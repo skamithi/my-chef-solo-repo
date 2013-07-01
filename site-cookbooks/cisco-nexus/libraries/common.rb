@@ -1,5 +1,6 @@
 require 'expect4r'
-require './errors'
+require File.dirname(__FILE__) + '/errors'
+
 
 module Cisco
  
@@ -40,16 +41,20 @@ module Cisco
     # Look at the code to determine which timezone variable to use
     # TODO create function that returns list of acceptable timezones
     def set_clock(timezone) 
-      if timezone.nil? || timezone.empty?
-        raise Cisco::Error::ClockSettingFailure
+      
+      if timezone.empty?
+        raise Cisco::Errors::TimezoneNotDefined
       end
+
       str = nil
-      binding.pry
       @term_session.config
-      case timezone
-      when 'Eastern'
+      case timezone.downcase
+      when 'eastern'
         @term_session.exp_send 'clock timezone EST -5 0'
         @term_session.exp_send 'clock summer-time EDT 2 Sun Mar 02:00 1 Sun Nov 02:00 60'
+      else
+        @term_session.to_exec
+        raise Cisco::Errors::TimezoneInvalid
       end
       @term_session.to_exec
     end

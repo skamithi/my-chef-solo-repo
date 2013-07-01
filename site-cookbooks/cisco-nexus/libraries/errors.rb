@@ -2,5 +2,6 @@ module Cisco
 end
 
 module Cisco::Errors
-  class TimezoneNotDefined < Error; end
+  class TimezoneNotDefined < ArgumentError; end
+  class TimezoneInvalid < ArgumentError; end
 end
