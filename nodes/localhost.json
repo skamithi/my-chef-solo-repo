@@ -1,1 +1,11 @@
-{"run_list":[ "recipe[kibera-pcs]"]}
+"run_list": [
+  "recipe[cisco_nexus]"
+],
+"default": {
+  "nexususer": "admin",
+  "nexushost": "172.18.116.28",
+  "nexuspasswd": "Cisco12345",
+  "timezone": "eastern"
+},
+"name": "proxy-chef-node"
+
